@@ -7,5 +7,27 @@
   </head>
   <body>
     <div id="app">m-spec panel</div>
+    <script>
+		var connection = chrome.runtime.connect({ name: "m-spec-panel" });
+
+		connection.onMessage.addListener(function (message) {
+		    console.log(message);
+		});
+
+		chrome.runtime.sendMessage({
+		    tabId: chrome.devtools.inspectedWindow.tabId,
+		    scriptToInject: "content_script.js"
+		});
+
+	    connection.postMessage({
+	        ...message,
+	        tabId: chrome.devtools.inspectedWindow.tabId
+	    });
+
+        chrome.devtools.inspectedWindow.eval(
+            'window.pingTapExtension();',
+            { useContentScriptContext: false }
+        );
+    </script>
   </body>
 </html>
